@@ -1,11 +1,12 @@
 import { useLayoutEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HeaderIconButton } from '../components/HeaderButtons';
 import { Chip, PrimaryButton, QuantityStepper } from '../components/ui';
 import { useCart } from '../context/CartContext';
 import { getCafeteriaByName } from '../data/cafeterias';
 import { COLORS, RADIUS, SHADOW } from '../theme';
+import { showAlert } from '../utils/alert';
 
 const HEADER_HEIGHT = 56;
 
@@ -27,6 +28,7 @@ export default function ItemDetailsScreen({ route, navigation }) {
     navigation.setOptions({
       title: item.name,
       headerTransparent: true,
+      headerStyle: { backgroundColor: 'transparent' }, // needed on web
       headerTintColor: '#fff',
       headerRight: () => (
         <HeaderIconButton
@@ -41,7 +43,7 @@ export default function ItemDetailsScreen({ route, navigation }) {
 
   const handleAddToCart = () => {
     addToCart(item, cafeteriaName, quantity);
-    Alert.alert('Added to cart 🛍️', `${quantity} × ${item.name} added.`, [
+    showAlert('Added to cart 🛍️', `${quantity} × ${item.name} added.`, [
       { text: 'Keep browsing', onPress: () => navigation.goBack() },
       { text: 'View cart', onPress: () => navigation.navigate('Cart') },
     ]);

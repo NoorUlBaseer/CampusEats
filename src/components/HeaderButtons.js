@@ -1,5 +1,6 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { showAlert } from '../utils/alert';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
 import { COLORS, SHADOW } from '../theme';
@@ -56,10 +57,10 @@ export function ClearCartButton() {
   const { cart, clearCart } = useCart();
   const onPress = () => {
     if (cart.length === 0) {
-      Alert.alert('Cart is empty', 'There is nothing to clear.');
+      showAlert('Cart is empty', 'There is nothing to clear.');
       return;
     }
-    Alert.alert('Clear cart?', 'All items will be removed from your cart.', [
+    showAlert('Clear cart?', 'All items will be removed from your cart.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Clear', style: 'destructive', onPress: clearCart },
     ]);

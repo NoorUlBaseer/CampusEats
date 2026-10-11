@@ -1,5 +1,6 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { showAlert } from '../utils/alert';
 import { useCart } from '../context/CartContext';
 import { COLORS, RADIUS, SHADOW } from '../theme';
 
@@ -22,7 +23,7 @@ export default function ProfileScreen({ navigation }) {
     {
       icon: 'help-circle-outline',
       label: 'Help & support',
-      onPress: () => Alert.alert('Help & support', 'Visit the cafeteria counter or email support@campuseats.pk'),
+      onPress: () => showAlert('Help & support', 'Visit the cafeteria counter or email support@campuseats.pk'),
     },
     {
       icon: 'information-circle-outline',

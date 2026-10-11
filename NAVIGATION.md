@@ -107,4 +107,11 @@ straight away. This is ordinary React state; React Navigation has nothing to do 
 npm install
 npx expo start
 ```
-Scan the QR code with Expo Go.
+Scan the QR code with Expo Go, or press `w` to open it in the browser.
+
+To run it straight in the browser:
+```
+npm run web
+```
+On web, `Alert.alert` does nothing, so the app uses `src/utils/alert.js`, which shows
+browser dialogs instead (OK/Cancel, with a note saying what each one does).

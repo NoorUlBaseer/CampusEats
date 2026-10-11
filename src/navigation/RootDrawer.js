@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import MainTabs from './MainTabs';
@@ -7,6 +6,7 @@ import FavouritesScreen from '../screens/FavouritesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import AboutScreen from '../screens/AboutScreen';
 import { HeaderIconButton } from '../components/HeaderButtons';
+import { showAlert } from '../utils/alert';
 import { COLORS } from '../theme';
 import { sharedHeaderOptions } from './headerOptions';
 
@@ -57,7 +57,7 @@ export default function RootDrawer() {
               icon="log-out-outline"
               color={COLORS.danger}
               onPress={() =>
-                Alert.alert('Log out', 'Are you sure you want to log out?', [
+                showAlert('Log out', 'Are you sure you want to log out?', [
                   { text: 'Cancel', style: 'cancel' },
                   { text: 'Log out', style: 'destructive' },
                 ])
