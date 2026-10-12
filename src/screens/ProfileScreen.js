@@ -38,8 +38,8 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>🎓</Text>
         </View>
-        <Text style={styles.name}>FAST Student</Text>
-        <Text style={styles.meta}>BS Computer Science · Karachi Campus</Text>
+        <Text style={styles.name}>Noor Ul Baseer</Text>
+        <Text style={styles.meta}>BS Software Engineering · Islamabad Campus</Text>
 
         <View style={styles.stats}>
           <Stat value={orders.length} label="Orders" />
