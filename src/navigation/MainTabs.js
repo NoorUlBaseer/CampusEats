@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BrowseStack from './BrowseStack';
 import OrdersStack from './OrdersStack';
 import CartScreen from '../screens/CartScreen';
@@ -20,6 +21,7 @@ const TAB_ICONS = {
 // TAB NAVIGATOR (the "Home" screen of the Drawer)
 export default function MainTabs() {
   const { cartCount } = useCart();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -28,10 +30,14 @@ export default function MainTabs() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.muted,
         tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
+        // Explicit height so the labels aren't clipped; the safe-area inset
+        // keeps it clear of the home indicator on phones.
         tabBarStyle: {
           backgroundColor: COLORS.card,
           borderTopWidth: 0,
+          height: 64 + insets.bottom,
           paddingTop: 6,
+          paddingBottom: 8 + insets.bottom,
           ...SHADOW.medium,
         },
         tabBarBadgeStyle: { backgroundColor: COLORS.primary, fontSize: 11 },
