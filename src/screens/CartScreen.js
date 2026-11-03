@@ -1,23 +1,42 @@
+import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { getCafeteriaByName } from '../data/cafeterias';
 import { EmojiTile, EmptyState, PrimaryButton, QuantityStepper } from '../components/ui';
+import PhoneVerificationModal from '../components/PhoneVerificationModal';
+import { showAlert } from '../utils/alert';
 import { COLORS, RADIUS, SHADOW } from '../theme';
 
 export default function CartScreen({ navigation }) {
   const { cart, cartCount, cartTotal, changeQuantity, placeOrder } = useCart();
+  const { isPhoneVerified, verifiedPhone } = useAuth();
+  const [otpModalVisible, setOtpModalVisible] = useState(false);
 
-  const handleCheckout = () => {
+  const confirmAndPlaceOrder = () => {
     const order = placeOrder();
-    // PASSING PARAMS TO A SCREEN IN ANOTHER NAVIGATOR:
-    // go to the "Orders" tab, then the "OrderDetails" screen inside its stack.
-    // initial: false keeps OrdersList underneath, so the back button works.
     navigation.navigate('Orders', {
       screen: 'OrderDetails',
       params: { orderId: order.id },
       initial: false,
     });
+  };
+
+  const handleCheckout = () => {
+    // If phone is not verified yet, prompt to verify with OTP
+    if (!isPhoneVerified) {
+      showAlert(
+        'Phone Verification Required',
+        'Please verify your mobile number with a one-time OTP so the cafeteria counter can contact you when your food is ready.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Verify with OTP', onPress: () => setOtpModalVisible(true) },
+        ]
+      );
+      return;
+    }
+    confirmAndPlaceOrder();
   };
 
   if (cart.length === 0) {
@@ -71,6 +90,31 @@ export default function CartScreen({ navigation }) {
             <SummaryLine label="Service fee" value="Free" highlight />
             <View style={styles.divider} />
             <SummaryLine label="Total" value={`Rs. ${cartTotal}`} bold />
+
+            {/* Phone Verification status badge on checkout */}
+            <View
+              style={[
+                styles.verificationNotice,
+                { backgroundColor: isPhoneVerified ? COLORS.successSoft : '#FEF3C7' },
+              ]}
+            >
+              <Ionicons
+                name={isPhoneVerified ? 'checkmark-circle' : 'alert-circle'}
+                size={16}
+                color={isPhoneVerified ? COLORS.success : '#D97706'}
+              />
+              <Text
+                style={[
+                  styles.verificationNoticeText,
+                  { color: isPhoneVerified ? COLORS.success : '#92400E' },
+                ]}
+              >
+                {isPhoneVerified
+                  ? `Order updates to: ${verifiedPhone}`
+                  : 'Phone not verified (OTP required at checkout)'}
+              </Text>
+            </View>
+
             <View style={styles.pickupNote}>
               <Ionicons name="time-outline" size={16} color={COLORS.success} />
               <Text style={styles.pickupText}>Ready for pickup in about 15 minutes</Text>
@@ -85,6 +129,16 @@ export default function CartScreen({ navigation }) {
           onPress={handleCheckout}
         />
       </View>
+
+      {/* OTP Verification Modal triggered on checkout */}
+      <PhoneVerificationModal
+        visible={otpModalVisible}
+        onClose={() => setOtpModalVisible(false)}
+        onSuccess={() => {
+          // After phone is verified, automatically place the order
+          confirmAndPlaceOrder();
+        }}
+      />
     </View>
   );
 }
@@ -130,13 +184,25 @@ const styles = StyleSheet.create({
   bold: { fontSize: 18, fontWeight: '800', color: COLORS.text },
   highlight: { color: COLORS.success },
   divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 8 },
+  verificationNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: RADIUS.sm,
+    padding: 10,
+    marginTop: 10,
+  },
+  verificationNoticeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginLeft: 6,
+  },
   pickupNote: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.successSoft,
     borderRadius: RADIUS.sm,
     padding: 10,
-    marginTop: 12,
+    marginTop: 10,
   },
   pickupText: { color: COLORS.success, fontSize: 13, fontWeight: '600', marginLeft: 6 },
   footer: {

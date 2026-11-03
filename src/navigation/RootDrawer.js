@@ -5,7 +5,9 @@ import DrawerContent from './DrawerContent';
 import FavouritesScreen from '../screens/FavouritesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import AboutScreen from '../screens/AboutScreen';
+import LoginScreen from '../screens/LoginScreen';
 import { HeaderIconButton } from '../components/HeaderButtons';
+import { useAuth } from '../context/AuthContext';
 import { showAlert } from '../utils/alert';
 import { COLORS } from '../theme';
 import { sharedHeaderOptions } from './headerOptions';
@@ -18,8 +20,9 @@ const drawerIcon =
     <Ionicons name={name} size={size} color={color} />;
 
 // DRAWER NAVIGATOR (the root of the app)
-// Drawer -> Home (Tabs) -> Browse (Stack) -> screens
 export default function RootDrawer() {
+  const { user, logout } = useAuth();
+
   return (
     <Drawer.Navigator
       drawerContent={(props) => <DrawerContent {...props} />}
@@ -52,18 +55,19 @@ export default function RootDrawer() {
         options={{
           title: 'My Profile',
           drawerIcon: drawerIcon('person-outline'),
-          headerRight: () => (
-            <HeaderIconButton
-              icon="log-out-outline"
-              color={COLORS.danger}
-              onPress={() =>
-                showAlert('Log out', 'Are you sure you want to log out?', [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Log out', style: 'destructive' },
-                ])
-              }
-            />
-          ),
+          headerRight: () =>
+            user ? (
+              <HeaderIconButton
+                icon="log-out-outline"
+                color={COLORS.danger}
+                onPress={() =>
+                  showAlert('Log out', 'Are you sure you want to log out?', [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Log out', style: 'destructive', onPress: logout },
+                  ])
+                }
+              />
+            ) : null,
         }}
       />
       <Drawer.Screen
@@ -72,9 +76,16 @@ export default function RootDrawer() {
         options={{
           title: 'About CampusEats',
           drawerIcon: drawerIcon('information-circle-outline'),
-          // A different header style for this screen only.
           headerStyle: { backgroundColor: COLORS.text },
           headerTintColor: '#fff',
+        }}
+      />
+      <Drawer.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          title: user ? 'Account / OTP' : 'Sign In with OTP',
+          drawerIcon: drawerIcon(user ? 'shield-checkmark-outline' : 'log-in-outline'),
         }}
       />
     </Drawer.Navigator>
